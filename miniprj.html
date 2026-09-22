@@ -1,0 +1,514 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Crystal Material Prediction</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            font-family: Arial, sans-serif;
+            background: #eef2f7;
+        }
+
+        .container {
+            width: 90%;
+            max-width: 900px;
+            margin: 40px auto;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1e293b;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #64748b;
+            margin-bottom: 30px;
+        }
+
+        .card {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+        }
+
+        h2 {
+            color: #1e293b;
+            margin-top: 0;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+        }
+
+        label {
+            display: block;
+            font-weight: bold;
+            margin-bottom: 7px;
+        }
+
+        input, select {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 15px;
+        }
+
+        button {
+            width: 100%;
+            margin-top: 25px;
+            padding: 14px;
+            border: none;
+            border-radius: 7px;
+            background: #2563eb;
+            color: white;
+            font-size: 17px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background: #1d4ed8;
+        }
+
+        .flow {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .step {
+            padding: 10px 15px;
+            background: #dbeafe;
+            border-radius: 6px;
+            font-weight: bold;
+        }
+
+        .arrow {
+            font-size: 20px;
+        }
+
+        #result {
+            display: none;
+            background: #f8fafc;
+            padding: 20px;
+            border-radius: 8px;
+        }
+
+        .prediction {
+            text-align: center;
+            font-size: 28px;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+
+        .result-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px;
+            border-bottom: 1px solid #e2e8f0;
+        }
+
+        .score {
+            text-align: center;
+            font-size: 22px;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        .error {
+            color: blueviolet;
+            font-weight: bold;
+        }
+
+        @media(max-width: 650px) {
+            .grid {
+                grid-template-columns: 1fr;
+            }
+
+            .flow {
+                flex-direction: column;
+            }
+
+            .arrow {
+                transform: rotate(90deg);
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <h1>Crystal Material ML Prediction</h1>
+
+    <p class="subtitle">
+        AI-Based Prediction Using Crystal and Material Properties
+    </p>
+
+
+    <!-- INPUT -->
+
+    <div class="card">
+
+        <h2>1. Enter Material Properties</h2>
+
+        <div class="grid">
+
+            <div>
+                <label>Chemical Composition</label>
+                <input
+                    type="text"
+                    id="composition"
+                    placeholder="Example: LiFePO4">
+            </div>
+
+            <div>
+                <label>Working Metal Ion</label>
+                <input
+                    type="text"
+                    id="metal"
+                    placeholder="Example: Li">
+            </div>
+
+            <div>
+                <label>Ion Concentration</label>
+                <input
+                    type="number"
+                    id="ion"
+                    placeholder="Example: 1.0"
+                    step="0.01">
+            </div>
+
+            <div>
+                <label>Crystal Lattice Type</label>
+
+                <select id="lattice">
+
+                    <option value="">
+                        Select Lattice
+                    </option>
+
+                    <option value="cubic">
+                        Cubic
+                    </option>
+
+                    <option value="tetragonal">
+                        Tetragonal
+                    </option>
+
+                    <option value="orthorhombic">
+                        Orthorhombic
+                    </option>
+
+                    <option value="hexagonal">
+                        Hexagonal
+                    </option>
+
+                    <option value="monoclinic">
+                        Monoclinic
+                    </option>
+
+                </select>
+            </div>
+
+            <div>
+                <label>Space Group</label>
+
+                <input
+                    type="text"
+                    id="space"
+                    placeholder="Example: Pnma">
+            </div>
+
+            <div>
+                <label>Atomic Number</label>
+
+                <input
+                    type="number"
+                    id="atomic"
+                    placeholder="Example: 3">
+            </div>
+
+        </div>
+
+
+        <button onclick="predict()">
+            Predict Material Performance
+        </button>
+
+    </div>
+
+
+    <!-- PROCESSING -->
+
+    <div class="card">
+
+        <h2>🔍 2. Processing Pipeline</h2>
+
+        <div class="flow">
+
+            <div class="step">
+                Data Cleaning
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="step">
+                Feature Extraction
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="step">
+                Normalization
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="step">
+                PCA
+            </div>
+
+            <div class="arrow">
+                →
+            </div>
+
+            <div class="step">
+                ML Model
+            </div>
+
+        </div>
+
+        <p id="status">
+            Waiting for input...
+        </p>
+
+    </div>
+
+
+    <!-- OUTPUT -->
+
+    <div class="card">
+
+        <h2>3. Prediction Result</h2>
+
+        <div id="result">
+
+            <p>
+                Enter the material properties above and click
+                <b>Predict Material Performance</b>.
+            </p>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<script>
+
+function predict() {
+
+    // READ INPUTS
+
+    let composition =
+        document.getElementById("composition").value.trim();
+
+    let metal =
+        document.getElementById("metal").value.trim();
+
+    let ion =
+        parseFloat(document.getElementById("ion").value);
+
+    let lattice =
+        document.getElementById("lattice").value;
+
+    let space =
+        document.getElementById("space").value.trim();
+
+    let atomic =
+        parseFloat(document.getElementById("atomic").value);
+
+    let result =
+        document.getElementById("result");
+
+    let status =
+        document.getElementById("status");
+
+
+    // VALIDATION
+
+    if (
+        composition === "" ||
+        metal === "" ||
+        isNaN(ion) ||
+        lattice === "" ||
+        space === "" ||
+        isNaN(atomic)
+    ) {
+
+        result.style.display = "block";
+
+        result.innerHTML =
+            '<p class="error">⚠ Please fill in all the fields.</p>';
+
+        status.innerHTML =
+            "Processing cancelled.";
+
+        return;
+    }
+
+
+    // PROCESSING
+
+    status.innerHTML =
+        "Processing: Cleaning data → Extracting features → Normalizing → PCA → ML prediction";
+
+
+    // LATTICE SCORE
+
+    let latticeScore = 0;
+
+    if (lattice === "cubic") {
+
+        latticeScore = 5;
+
+    } else if (lattice === "tetragonal") {
+
+        latticeScore = 4;
+
+    } else if (lattice === "hexagonal") {
+
+        latticeScore = 4;
+
+    } else if (lattice === "orthorhombic") {
+
+        latticeScore = 3;
+
+    } else if (lattice === "monoclinic") {
+
+        latticeScore = 2;
+
+    }
+
+
+    // FEATURE NORMALIZATION
+
+    let ionFeature =
+        Math.min(ion / 2, 1);
+
+    let atomicFeature =
+        Math.min(atomic / 100, 1);
+
+
+    // PREDICTION SCORE
+
+    let score =
+        (latticeScore / 5) * 40 +
+        ionFeature * 30 +
+        atomicFeature * 30;
+
+
+    score =
+        Math.max(0, Math.min(score, 100));
+
+
+    // CLASSIFICATION
+
+    let prediction;
+
+    if (score >= 70) {
+
+        prediction = "High Performance";
+
+    } else if (score >= 45) {
+
+        prediction = "Moderate Performance";
+
+    } else {
+
+        prediction = "Low Performance";
+
+    }
+
+
+    // DISPLAY RESULT
+
+    result.style.display = "block";
+
+    result.innerHTML = `
+
+        <div class="prediction">
+            ${prediction}
+        </div>
+
+        <div class="result-row">
+            <span>Chemical Composition</span>
+            <b>${composition}</b>
+        </div>
+
+        <div class="result-row">
+            <span>Working Metal Ion</span>
+            <b>${metal}</b>
+        </div>
+
+        <div class="result-row">
+            <span>Ion Concentration</span>
+            <b>${ion}</b>
+        </div>
+
+        <div class="result-row">
+            <span>Crystal Lattice</span>
+            <b>${lattice}</b>
+        </div>
+
+        <div class="result-row">
+            <span>Space Group</span>
+            <b>${space}</b>
+        </div>
+
+        <div class="result-row">
+            <span>Atomic Number</span>
+            <b>${atomic}</b>
+        </div>
+
+        <div class="score">
+            Prediction Score:
+            ${score.toFixed(2)} / 100
+        </div>
+
+    `;
+
+    status.innerHTML =
+        "✅ Processing completed successfully.";
+
+}
+
+</script>
+
+</body>
+</html>
